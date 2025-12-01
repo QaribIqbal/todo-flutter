@@ -21,6 +21,9 @@ class _HomescreenState
         State<
           Homescreen
         > {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
+
   List<
     Todo
   >
@@ -46,15 +49,29 @@ class _HomescreenState
       isDone: true,
     ),
   ];
-  // void toggleTodoStatus(
-  //   int index,
-  // ) {
-  //   setState(
-  //     () {
-  //       todos[index].toggleDone();
-  //     },
-  //   );
-  // }
+  void toggleTodoStatus(
+    int index,
+  ) {
+    setState(
+      () {
+        todos[index].toggleDone();
+
+        todos.sort(
+          (
+            a,
+            b,
+          ) {
+            if (a.isDone ==
+                b.isDone)
+              return 0;
+            return a.isDone
+                ? 1
+                : -1;
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(
@@ -87,7 +104,9 @@ class _HomescreenState
                 status: todo.isDone,
                 onTap: () => setState(
                   () {
-                    todos[index].toggleDone();
+                    toggleTodoStatus(
+                      index,
+                    );
                   },
                 ),
               );
@@ -129,6 +148,7 @@ class _HomescreenState
                             height: 15,
                           ),
                           TextField(
+                            controller: titleController,
                             decoration: InputDecoration(
                               labelText: "Title",
                               border: OutlineInputBorder(
@@ -137,11 +157,15 @@ class _HomescreenState
                                 ),
                               ),
                             ),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
                           ),
                           SizedBox(
                             height: 20,
                           ),
                           TextField(
+                            controller: descController,
                             decoration: InputDecoration(
                               labelText: "Desc",
                               border: OutlineInputBorder(
@@ -150,12 +174,44 @@ class _HomescreenState
                                 ),
                               ),
                             ),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
                           ),
                           SizedBox(
                             height: 20,
                           ),
                           ElevatedButton(
-                            onPressed: () => {},
+                            onPressed: () => {
+                              todos.add(
+                                Todo(
+                                  title: titleController.text,
+                                  desc: descController.text,
+                                  isDone: false,
+                                ),
+                              ),
+                              titleController.clear(),
+                              descController.clear(),
+                              todos.sort(
+                                (
+                                  a,
+                                  b,
+                                ) {
+                                  if (a.isDone ==
+                                      b.isDone)
+                                    return 0;
+                                  return a.isDone
+                                      ? 1
+                                      : -1;
+                                },
+                              ),
+                              Navigator.of(
+                                context,
+                              ).pop(),
+                              setState(
+                                () {},
+                              ),
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.deepPurple, // 🔵 Background color
                               foregroundColor: Colors.white, // ⚪ Text/Icon color
